@@ -1,0 +1,1 @@
+let close = document.getElementById('closeModal');
