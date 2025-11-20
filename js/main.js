@@ -24,13 +24,27 @@ const ExperienceContainer = document.getElementById('experiencesContainer');
 const BtnCancelEmploye = document.getElementById('cancelEmployee');
 const BtnAddEmploye = document.getElementById('AddEmployee');
 
+const PlaceReception = ["RoomConferenceID", "RoomReceptionID", "RoomStaffID"];
+const PlaceServer = ["RoomConferenceID", "RoomServerID", "RoomStaffID"];
+const PlaceSecurity = ["RoomConferenceID", "RoomSecurityID", "RoomStaffID"];
+const PlaceManager = ["RoomConferenceID", "RoomReceptionID", "RoomServerID", "RoomSecurityID", "RoomStaffID", "RoomArchiveID"];
+const PlaceCleaning = ["RoomConferenceID", "RoomReceptionID", "RoomServerID", "RoomSecurityID", "RoomStaffID"];
+const PlaceOther = ["RoomConferenceID", "RoomStaffID"];
 
+//id dyal chaque room m3a array dyal chaque worker if id = at least one === append child to div 
 let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
 
 // function SauvgarderEmploye(){
 //     return localStorage.setItem('workers', JSON.stringify(Workers))
 // }
 // SauvgarderEmploye();
+
+let RoleCleaning = [];
+let RoleManager = [];
+let RoleServerIT = [];
+let RoleSecurity = [];
+let RoleOther = [];
+let RoleReception = [];
 
 function validateForm() {
     employeeModal.addEventListener('submit', (e) => {
@@ -46,6 +60,26 @@ function validateForm() {
             EmployeExperiences: experiences,
             EmployeLocation: null
         };
+
+            function assignRooms(role) {
+        switch(role) {
+            case "manager": 
+                return PlaceManager;
+            case "receptionist":
+                return PlaceReception;
+            case "technician":
+                return PlaceServer;
+            case "security":
+                return PlaceSecurity;
+            case "cleaning":
+                return PlaceCleaning;
+            default:
+                return PlaceOther;
+        }
+    }
+
+    EmployeInfo.rooms = assignRooms(EmployeInfo.EmployeRole);
+
         let EmployeNameRe = /^[a-zA-ZÀ-ÿ\s]{2,30}$/;
         let EmployeEmailRe = /^[a-zA-Z0-9._%+-]+@gmail.com$/;
         let EmployePhoneRe = /^[0-9]{9}$/;
@@ -74,7 +108,31 @@ function validateForm() {
         alert("User added!!!");
         AfficherEmployer(Workers);
 
+        function getRole() {
+            if (EmployeInfo.EmployeRole === 'manager') {
+                RoleManager.push(EmployeInfo);
+                console.log(RoleManager);
+            }
+            else if (EmployeInfo.EmployeRole === 'receptionist') {
+                RoleReception.push(EmployeInfo);
+                console.log(RoleReception);
+            }
+            else if (EmployeInfo.EmployeRole === 'technician') {
+                RoleServerIT.push(EmployeInfo);
+            }
+            else if (EmployeInfo.EmployeRole === 'security') {
+                RoleSecurity.push(EmployeInfo);
+            }
+            else if (EmployeInfo.EmployeRole === 'cleaning') {
+                RoleCleaning.push(EmployeInfo);
+            }
+            else {
+                RoleOther.push(EmployeInfo);
+            }
+        }
+        getRole();
     });
+
     function getAllExperiences() {
         const fields = ExperienceContainer.querySelectorAll('.experience-field');
         let experiences = [];
@@ -95,6 +153,10 @@ function validateForm() {
     }
 
 }
+
+
+
+
 validateForm();
 
 function AfficherEmployer(Workers) {
@@ -175,8 +237,8 @@ function updateExperienceNumbers() {
 const Add_Employee_Btn_archive = document.getElementById('add-employee-btn-archive');
 const Add_Employee_Btn_staff = document.getElementById('add-employee-btn-staff');
 const Add_Employee_Btn_server = document.getElementById('add-employee-btn-server');
-const Add_Employee_Btn_reception = document.getElementById('add-employee-btn-reception'); 
-const Add_Employee_Btn_security = document.getElementById('add-employee-btn-security'); 
+const Add_Employee_Btn_reception = document.getElementById('add-employee-btn-reception');
+const Add_Employee_Btn_security = document.getElementById('add-employee-btn-security');
 const Add_Employee_Btn_conference = document.getElementById('add-employee-btn-conference');
 const AssignModal = document.getElementById('assignModal');
 const BtnCloseAssignModal = document.getElementById('closeAssignModal');
@@ -206,6 +268,18 @@ function AfficherFormuleAssign() {
     });
 }
 AfficherFormuleAssign();
+
+const RoomConferenceID = document.getElementById('RoomConference'); 
+const RoomReceptionID = document.getElementById('RoomReception');  
+const RoomServerID  = document.getElementById('RoomServer'); 
+const RoomSecurityID = document.getElementById('RoomSecurity');  
+const RoomStaffID  = document.getElementById('RoomStaff'); 
+const RoomArchiveID = document.getElementById('RoomArchive'); 
+
+
+// Add_Employee_Btn_archive.addEventListener('click', () => {
+//         let zoneArchive = RoomArchiveID.getAttribute('data-zone');
+// });
 
 const ProfileModal = document.getElementById('profileModal');
 const BtnCloseProfileModal = document.getElementById('closeProfileModal');
