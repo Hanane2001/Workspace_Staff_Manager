@@ -70,7 +70,7 @@ AfficherFormuleWorkers();
 // SauvgarderEmploye();
 
 //*** fonction qui donne tous les experiences d'un employe ***
-    function getAllExperiences() {
+function getAllExperiences() {
         const fields = ExperienceContainer.querySelectorAll('.experience-field');
         let experiences = [];
 
@@ -417,3 +417,20 @@ function getZoneName(zone) {
 }
 AfficherEmployer(Workers);
 
+document.getElementById('employeePhoto').addEventListener('input', function() {
+    const url = this.value.trim();
+    if (isValidImageUrl(url)) {
+        EmployePhotoPreview.innerHTML = `<img src="${url}" alt="Preview" class="w-full h-full object-cover rounded-full">`;
+    } else {
+        EmployePhotoPreview.innerHTML = '<i class="fas fa-user text-gray-400 text-2xl"></i>';
+    }
+});
+
+BtnCloseProfileModal.addEventListener('click', () => {
+    ProfileModal.classList.add('hidden');
+});
+
+BtnCloseProfile.addEventListener('click', () => {
+    ProfileModal.classList.add('hidden');
+});
+addExperienceForm();
