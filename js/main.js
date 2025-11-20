@@ -1,4 +1,4 @@
-//*** Tout les variables globales ***
+//*** Tous les variables globales ***
 const Btnclose = document.getElementById('closeModal');
 const BtnAddWorkers = document.getElementById('addWorkerBtn');
 const WorkersContainer = document.getElementById('unassignedStaff');
@@ -221,7 +221,7 @@ function AfficherEmployer(Workers) {
         WorkersContainer.appendChild(workerElement);
         
         workerElement.querySelector('.view-profile').addEventListener('click', () => {
-            showProfile(data);
+            AfficheProfile(data);
         });
         
         workerElement.querySelector('.remove-worker').addEventListener('click', () => {
@@ -229,7 +229,6 @@ function AfficherEmployer(Workers) {
         });
     });
 }
-// AfficherEmployer(Workers);
 
 //*** fonction qui supprime un employe ***
 function removeWorker(workerId) {
@@ -237,8 +236,41 @@ function removeWorker(workerId) {
         Workers = Workers.filter(worker => worker.id !== workerId);
         localStorage.setItem("Workers", JSON.stringify(Workers));
         AfficherEmployer(Workers);
+        initializeZoneDisplays();
     }
 }
+
+function initializeZoneDisplays() {
+    const zones = ['conference', 'reception', 'server', 'security', 'staff', 'archive'];
+    zones.forEach(zone => updateZone(zone));
+}
+initializeZoneDisplays();
+
+//*** fonction fais le mise a jour de zone
+function updateZone(zone) {
+    const zoneElement = document.querySelector(`[data-zone="${zone}"]`);
+    const employeesContainer = zoneElement.querySelector('.zone-employees');
+    const workersInZone = Workers.filter(worker => worker.EmployeLocation === zone);
+    
+    employeesContainer.innerHTML = '';
+    
+    workersInZone.forEach(worker => {
+        const employeeElement = document.createElement('div');
+        employeeElement.className = 'zone-worker flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50 rounded';
+        employeeElement.innerHTML = `
+            <img class="rounded-full w-12 h-12 mb-1 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
+            <span class="text-xs text-center font-medium truncate w-full">${worker.EmployeName}</span>
+            <span class="text-xs text-gray-500 capitalize">${worker.EmployeRole}</span>
+        `;
+        
+        employeeElement.addEventListener('click', () => {
+            AfficheProfile(worker);
+        });
+        
+        employeesContainer.appendChild(employeeElement);
+    });
+}
+
 
 //*** fonction qui close formule d'ajouter employe ***
 function CancelFormulaire() {
@@ -330,6 +362,7 @@ function AfficherFormuleAssign() {
 }
 AfficherFormuleAssign();
 
+//*** fonction tester la validation d'un image ***
 function isValidImageUrl(url) {
     if (!url || url.trim() === '') return false;
     const imagePattern = /\.(jpeg|jpg|gif|png|webp|svg)$/i;
@@ -343,4 +376,44 @@ function getImageUrl(url) {
         return 'https://i.pinimg.com/1200x/01/85/e4/0185e4c0175af1347a02a9a814ede0e2.jpg';
     }
 }
+
+//*** fonction afficher profile employe ***
+function AfficheProfile(worker) {
+    ProfileName.textContent = worker.EmployeName;
+    ProfileRole.textContent = worker.EmployeRole;
+    ProfileEmail.textContent = worker.EmployeEmail;
+    ProfilePhone.textContent = worker.EmployePhone;
+    ProfileLocation.textContent = worker.EmployeLocation ? `Assigned to: ${getZoneName(worker.EmployeLocation)}` : "Not assigned";
+    const safePhotoUrl = getImageUrl(worker.EmployePhotoUrl);
+    ProfilePhoto.innerHTML = `<img src="${safePhotoUrl}" alt="${worker.EmployeName}" class="w-full h-full object-cover rounded-full">`;
+    
+    ProfileExperiences.innerHTML = '';
+    if (worker.EmployeExperiences && worker.EmployeExperiences.length > 0) {
+        worker.EmployeExperiences.forEach(exp => {
+            const li = document.createElement('li');
+            li.textContent = `${exp.poste} (${exp.start || 'Unknown'} - ${exp.end || 'Present'})`;
+            ProfileExperiences.appendChild(li);
+        });
+    } else {
+        const li = document.createElement('li');
+        li.textContent = 'No professional experience';
+        li.className = 'text-gray-500';
+        ProfileExperiences.appendChild(li);
+    }
+    ProfileModal.classList.remove('hidden');
+}
+
+//*** fonction qui donne le nom de chambre ***
+function getZoneName(zone) {
+    const zoneNames = {
+        'conference': 'Conference Room',
+        'reception': 'Reception',
+        'server': 'Server Room',
+        'security': 'Security Room',
+        'staff': 'Staff Room',
+        'archive': 'Archives Room'
+    };
+    return zoneNames[zone] || zone;
+}
+AfficherEmployer(Workers);
 
