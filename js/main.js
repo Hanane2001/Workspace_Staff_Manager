@@ -27,25 +27,6 @@ const BtnAddEmploye = document.getElementById('AddEmployee');
 
 let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
 
-// const roleRestrictions = {
-//     'receptionist': ['reception'],
-//     'technician': ['server'],
-//     'security': ['security'],
-//     'cleaning': ['no-archive'],
-//     'manager': [],
-//     'other': []
-// };
-// const newEmployee = {
-//     id: Date.now(),
-//     name,
-//     role,
-//     photo,
-//     email,
-//     phone,
-//     experiences,
-//     location: null
-// };
-
 // function SauvgarderEmploye(){
 //     return localStorage.setItem('workers', JSON.stringify(Workers))
 // }
@@ -54,7 +35,7 @@ let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
 function validateForm() {
     employeeModal.addEventListener('submit', (e) => {
         e.preventDefault();
-         const experiences = getAllExperiences();
+        const experiences = getAllExperiences();
 
         const EmployeInfo = {
             EmployeName: document.getElementById('employeeName').value.trim(),
@@ -62,7 +43,8 @@ function validateForm() {
             EmployePhotoUrl: document.getElementById('employeePhoto').value.trim(),
             EmployeEmail: document.getElementById('employeeEmail').value.trim(),
             EmployePhone: document.getElementById('employeePhone').value.trim(),
-            EmployeExperiences: experiences
+            EmployeExperiences: experiences,
+            EmployeLocation: null
         };
         let EmployeNameRe = /^[a-zA-ZÀ-ÿ\s]{2,30}$/;
         let EmployeEmailRe = /^[a-zA-Z0-9._%+-]+@gmail.com$/;
@@ -91,31 +73,29 @@ function validateForm() {
         localStorage.setItem("Workers", JSON.stringify(Workers));
         alert("User added!!!");
         AfficherEmployer(Workers);
-        
+
     });
     function getAllExperiences() {
-    const fields = ExperienceContainer.querySelectorAll('.experience-field');
-    let experiences = [];
+        const fields = ExperienceContainer.querySelectorAll('.experience-field');
+        let experiences = [];
 
-    fields.forEach(field => {
-        const expInput = field.querySelector('.experience-input').value.trim();
-        const startDate = field.querySelector('.start-date').value;
-        const endDate = field.querySelector('.end-date').value;
+        fields.forEach(field => {
+            const expInput = field.querySelector('.experience-input').value.trim();
+            const startDate = field.querySelector('.start-date').value;
+            const endDate = field.querySelector('.end-date').value;
 
-        experiences.push({
-            poste: expInput,
-            start: startDate,
-            end : endDate
+            experiences.push({
+                poste: expInput,
+                start: startDate,
+                end: endDate
+            });
         });
-    });
 
-    return experiences;
-}
+        return experiences;
+    }
 
 }
 validateForm();
-
-
 
 function AfficherEmployer(Workers) {
     if (!WorkersContainer) return;
@@ -135,16 +115,7 @@ function AfficherEmployer(Workers) {
     });
 }
 AfficherEmployer(Workers);
-
-// function updateWorkerNumbers(){
-//     const WorkerFields = ExperienceContainer.querySelectorAll('.Worker-Field');
-//     WorkerFields.forEach((field, index) => {
-//         const title = field.querySelector('h4');
-//         const WorkerNumber = index + 1;
-//         title.textContent = `Workers ${WorkerNumber}`;
-//         field.setAttribute('data-worker-id', WorkerNumber);
-//     });
-// }
+// let WorkersProf = document.querySelectorAll('.Worker-Field');
 
 function CancelFormulaire() {
     BtnCancelEmploye.addEventListener('click', () => {
@@ -182,7 +153,7 @@ function addExperienceForm() {
                 <input type="date" class="end-date w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>`;
-        
+
     ExperienceContainer.appendChild(experienceField);
     experienceField.querySelector('.remove-experience').addEventListener('click', function () {
         if (ExperienceContainer.children.length > 1) {
@@ -191,7 +162,7 @@ function addExperienceForm() {
         }
     });
 }
-function updateExperienceNumbers(){
+function updateExperienceNumbers() {
     const experienceFields = ExperienceContainer.querySelectorAll('.experience-field');
     experienceFields.forEach((field, index) => {
         const title = field.querySelector('h4');
@@ -201,6 +172,40 @@ function updateExperienceNumbers(){
     });
 }
 
+const Add_Employee_Btn_archive = document.getElementById('add-employee-btn-archive');
+const Add_Employee_Btn_staff = document.getElementById('add-employee-btn-staff');
+const Add_Employee_Btn_server = document.getElementById('add-employee-btn-server');
+const Add_Employee_Btn_reception = document.getElementById('add-employee-btn-reception'); 
+const Add_Employee_Btn_security = document.getElementById('add-employee-btn-security'); 
+const Add_Employee_Btn_conference = document.getElementById('add-employee-btn-conference');
+const AssignModal = document.getElementById('assignModal');
+const BtnCloseAssignModal = document.getElementById('closeAssignModal');
+// const AfficheNamesWorkerContainer = document.querySelector('.container');
+
+function AfficherFormuleAssign() {
+    Add_Employee_Btn_archive.addEventListener('click', () => {
+        AssignModal.classList.remove('hidden');
+    });
+    Add_Employee_Btn_staff.addEventListener('click', () => {
+        AssignModal.classList.remove('hidden');
+    });
+    Add_Employee_Btn_server.addEventListener('click', () => {
+        AssignModal.classList.remove('hidden');
+    });
+    Add_Employee_Btn_security.addEventListener('click', () => {
+        AssignModal.classList.remove('hidden');
+    });
+    Add_Employee_Btn_reception.addEventListener('click', () => {
+        AssignModal.classList.remove('hidden');
+    });
+    Add_Employee_Btn_conference.addEventListener('click', () => {
+        AssignModal.classList.remove('hidden');
+    });
+    BtnCloseAssignModal.addEventListener('click', () => {
+        AssignModal.classList.add('hidden');
+    });
+}
+AfficherFormuleAssign();
 
 const ProfileModal = document.getElementById('profileModal');
 const BtnCloseProfileModal = document.getElementById('closeProfileModal');

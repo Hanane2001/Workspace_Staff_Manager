@@ -61,7 +61,7 @@
                             <div class="drop-zone zone w-[26em] h-52" data-zone="conference" data-max="8">
                                 <div class="zone-title">Conference room</div>
                                 <div class="zone-employees" id="conference-employees"></div>
-                                <div class="add-employee-btn" data-zone="conference">
+                                <div class="add-employee-btn" id="add-employee-btn-conference" data-zone="conference">
                                     <i class="fas fa-plus"></i>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                             <div class="drop-zone zone grow" data-zone="reception" data-max="2" data-restricted="receptionist">
                                 <div class="zone-title">Reception</div>
                                 <div class="zone-employees" id="reception-employees"></div>
-                                <div class="add-employee-btn" data-zone="reception">
+                                <div class="add-employee-btn" id="add-employee-btn-reception" data-zone="reception">
                                     <i class="fas fa-plus"></i>
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                 <div class="drop-zone zone w-[50%] h-52" data-zone="server" data-max="3" data-restricted="technician">
                                     <div class="zone-title">Server room</div>
                                     <div class="zone-employees" id="server-employees"></div>
-                                    <div class="add-employee-btn" data-zone="server">
+                                    <div class="add-employee-btn" id="add-employee-btn-server" data-zone="server">
                                         <i class="fas fa-plus"></i>
                                     </div>
                                 </div>
@@ -93,7 +93,7 @@
                                 <div class="drop-zone zone w-[50%] h-52" data-zone="security" data-max="2" data-restricted="security">
                                     <div class="zone-title">Security room</div>
                                     <div class="zone-employees" id="security-employees"></div>
-                                    <div class="add-employee-btn" data-zone="security">
+                                    <div class="add-employee-btn" id="add-employee-btn-security" data-zone="security">
                                         <i class="fas fa-plus"></i>
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                                 <div class="drop-zone zone w-[15em]" data-zone="staff" data-max="6">
                                     <div class="zone-title">Staff room</div>
                                     <div class="zone-employees" id="staff-employees"></div>
-                                    <div class="add-employee-btn" data-zone="staff">
+                                    <div class="add-employee-btn" id="add-employee-btn-staff" data-zone="staff">
                                         <i class="fas fa-plus"></i>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                                 <div class="drop-zone zone grow" data-zone="archive" data-max="2" data-restricted="no-cleaning">
                                     <div class="zone-title">Archives Room</div>
                                     <div class="zone-employees" id="archive-employees"></div>
-                                    <div class="add-employee-btn" data-zone="archive">
+                                    <div class="add-employee-btn" id="add-employee-btn-archive" data-zone="archive">
                                         <i class="fas fa-plus"></i>
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@
     </div>
 
     <!-- Modale d'ajout d'employe -->
-    <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="employeeModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
             <div class="flex justify-between items-center p-6 border-b">
                 <h3 class="text-lg font-semibold text-gray-800">Add an employee</h3>
@@ -194,7 +194,7 @@
     </div>
 
     <!-- Modale de selection d'employe pour une zone -->
-    <div id="assignModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="assignModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
             <div class="flex justify-between items-center p-6 border-b">
                 <h3 id="assignModalTitle" class="text-lg font-semibold text-gray-800">Assign an employee</h3>
@@ -214,7 +214,7 @@
     </div>
 
     <!-- Modale de profil d'employe -->
-    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div id="profileModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
             <div class="flex justify-between items-center p-6 border-b">
                 <h3 class="text-lg font-semibold text-gray-800">Employee Profile</h3>
