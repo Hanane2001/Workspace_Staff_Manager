@@ -108,3 +108,11 @@ function AfficherEmployer(Workers) {
     });
 }
 AfficherEmployer(Workers);
+
+function CancelFormulaire() {
+    BtnCancelEmploye.addEventListener('click', () => {
+        AddEmploy.classList.add('hidden');
+    });
+}
+CancelFormulaire();
+
