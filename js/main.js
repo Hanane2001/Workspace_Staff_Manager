@@ -54,12 +54,15 @@ let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
 function validateForm() {
     employeeModal.addEventListener('submit', (e) => {
         e.preventDefault();
+         const experiences = getAllExperiences();
+
         const EmployeInfo = {
             EmployeName: document.getElementById('employeeName').value.trim(),
             EmployeRole: document.getElementById('employeeRole').value.trim(),
             EmployePhotoUrl: document.getElementById('employeePhoto').value.trim(),
             EmployeEmail: document.getElementById('employeeEmail').value.trim(),
-            EmployePhone: document.getElementById('employeePhone').value.trim()
+            EmployePhone: document.getElementById('employeePhone').value.trim(),
+            EmployeExperiences: experiences
         };
         let EmployeNameRe = /^[a-zA-ZÀ-ÿ\s]{2,30}$/;
         let EmployeEmailRe = /^[a-zA-Z0-9._%+-]+@gmail.com$/;
@@ -88,25 +91,60 @@ function validateForm() {
         localStorage.setItem("Workers", JSON.stringify(Workers));
         alert("User added!!!");
         AfficherEmployer(Workers);
+        
     });
+    function getAllExperiences() {
+    const fields = ExperienceContainer.querySelectorAll('.experience-field');
+    let experiences = [];
+
+    fields.forEach(field => {
+        const expInput = field.querySelector('.experience-input').value.trim();
+        const startDate = field.querySelector('.start-date').value;
+        const endDate = field.querySelector('.end-date').value;
+
+        experiences.push({
+            poste: expInput,
+            start: startDate,
+            end : endDate
+        });
+    });
+
+    return experiences;
+}
+
 }
 validateForm();
+
+
 
 function AfficherEmployer(Workers) {
     if (!WorkersContainer) return;
     WorkersContainer.innerHTML = '';
     Workers.forEach(data => {
-        WorkersContainer.innerHTML += `<div class="flex items-center shadow-xl mb-[2%]">
+        WorkersContainer.innerHTML += `<div class="Worker-Field flex items-center shadow-xl mb-[2%] p-[2%]">
                     <img class="rounded-full w-[20%] m-2" src="${data.EmployePhotoUrl}">
                     <div class="ml-2 flex-1 min-w-0">
                         <p class="text-sm font-medium text-gray-800 truncate">${data.EmployeName}</p>
                         <p class="text-xs text-gray-500 capitalize">${data.EmployeRole}</p>
                     </div>
-                </div>`
+                    <button type="button" class="Modifier-Worker px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
+                        <i class="fas fa-times mr-1"></i>Modifier
+                    </button>
+                </div>`;
         localStorage.setItem("Workers", JSON.stringify(Workers));
     });
 }
 AfficherEmployer(Workers);
+
+// function updateWorkerNumbers(){
+//     const WorkerFields = ExperienceContainer.querySelectorAll('.Worker-Field');
+//     WorkerFields.forEach((field, index) => {
+//         const title = field.querySelector('h4');
+//         const WorkerNumber = index + 1;
+//         title.textContent = `Workers ${WorkerNumber}`;
+//         field.setAttribute('data-worker-id', WorkerNumber);
+//     });
+// }
 
 function CancelFormulaire() {
     BtnCancelEmploye.addEventListener('click', () => {
@@ -128,7 +166,7 @@ function addExperienceForm() {
         <div class="flex items-center justify-between mb-3">
             <h4 class="text-lg font-medium">Experience ${experienceCount}</h4>
             <button type="button" class="remove-experience px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
-                <i class="fas fa-times mr-1"></i>Supprimer
+                <i class="fas fa-times mr-1"></i>remove
             </button>
         </div>
         <div class="mb-3">
@@ -142,11 +180,9 @@ function addExperienceForm() {
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
                 <input type="date" class="end-date w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <label class="flex items-center mt-2">
-                    <input type="checkbox" class="current-job mr-2"> Poste actuel
-                </label>
             </div>
         </div>`;
+        
     ExperienceContainer.appendChild(experienceField);
     experienceField.querySelector('.remove-experience').addEventListener('click', function () {
         if (ExperienceContainer.children.length > 1) {
@@ -154,18 +190,8 @@ function addExperienceForm() {
             updateExperienceNumbers();
         }
     });
-    const currentJobCheckbox = experienceField.querySelector('.current-job');
-    const endDateInput = experienceField.querySelector('.end-date');
-    currentJobCheckbox.addEventListener('change', function () {
-        if (this.checked) {
-            endDateInput.disabled = true;
-            endDateInput.value = '';
-        } else {
-            endDateInput.disabled = false;
-        }
-    });
 }
-function updateExperienceNumbers() {
+function updateExperienceNumbers(){
     const experienceFields = ExperienceContainer.querySelectorAll('.experience-field');
     experienceFields.forEach((field, index) => {
         const title = field.querySelector('h4');
