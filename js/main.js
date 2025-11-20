@@ -24,9 +24,8 @@ const ExperienceContainer = document.getElementById('experiencesContainer');
 const BtnCancelEmploye = document.getElementById('cancelEmployee');
 const BtnAddEmploye = document.getElementById('AddEmployee');
 
+
 let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
-
-
 
 // const roleRestrictions = {
 //     'receptionist': ['reception'],
@@ -87,7 +86,7 @@ function validateForm() {
         Workers.push(EmployeInfo);
 
         localStorage.setItem("Workers", JSON.stringify(Workers));
-        alert("Utilisateur ajouté !");
+        alert("User added!!!");
         AfficherEmployer(Workers);
     });
 }
@@ -116,15 +115,26 @@ function CancelFormulaire() {
 }
 CancelFormulaire();
 
+EmployeExperience.addEventListener('click', () => {
+    addExperienceForm();
+});
+
 function addExperienceForm() {
-    const experienceCount = ExperienceContainer.children.length;
+    const experienceCount = ExperienceContainer.children.length + 1;
     const experienceField = document.createElement('div');
     experienceField.className = 'experience-field mb-4 p-4 border border-gray-200 rounded-lg';
+    experienceField.setAttribute('data-experience-id', experienceCount);
     experienceField.innerHTML = `
+        <div class="flex items-center justify-between mb-3">
+            <h4 class="text-lg font-medium">Experience ${experienceCount}</h4>
+            <button type="button" class="remove-experience px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
+                <i class="fas fa-times mr-1"></i>Supprimer
+            </button>
+        </div>
         <div class="mb-3">
             <input type="text" class="experience-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Poste et entreprise">
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
                 <input type="date" class="start-date w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -132,17 +142,48 @@ function addExperienceForm() {
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
                 <input type="date" class="end-date w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="flex items-center mt-2">
+                    <input type="checkbox" class="current-job mr-2"> Poste actuel
+                </label>
             </div>
-        </div>
-        <div class="flex justify-end">
-            <button type="button" class="remove-experience px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
-                <i class="fas fa-times mr-1"></i>Supprimer
-            </button>
         </div>`;
     ExperienceContainer.appendChild(experienceField);
     experienceField.querySelector('.remove-experience').addEventListener('click', function () {
         if (ExperienceContainer.children.length > 1) {
             ExperienceContainer.removeChild(experienceField);
+            updateExperienceNumbers();
+        }
+    });
+    const currentJobCheckbox = experienceField.querySelector('.current-job');
+    const endDateInput = experienceField.querySelector('.end-date');
+    currentJobCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            endDateInput.disabled = true;
+            endDateInput.value = '';
+        } else {
+            endDateInput.disabled = false;
         }
     });
 }
+function updateExperienceNumbers() {
+    const experienceFields = ExperienceContainer.querySelectorAll('.experience-field');
+    experienceFields.forEach((field, index) => {
+        const title = field.querySelector('h4');
+        const experienceNumber = index + 1;
+        title.textContent = `Experience ${experienceNumber}`;
+        field.setAttribute('data-experience-id', experienceNumber);
+    });
+}
+
+
+const ProfileModal = document.getElementById('profileModal');
+const BtnCloseProfileModal = document.getElementById('closeProfileModal');
+const ProfilePhoto = document.getElementById('profilePhoto');
+const ProfileName = document.getElementById('profileName');
+const ProfileRole = document.getElementById('profileRole');
+const ProfileEmail = document.getElementById('profileEmail');
+const ProfilePhone = document.getElementById('profilePhone');
+const ProfileLocation = document.getElementById('profileLocation');
+const ProfileExperiences = document.getElementById('profileExperiences');
+const BtnCloseProfile = document.getElementById('closeProfile');
+
