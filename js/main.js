@@ -9,7 +9,7 @@ function AfficherFormuleWorkers() {
     });
     Btnclose.addEventListener('click', () => {
         AddEmploy.classList.add('hidden');
-    })
+    });
 }
 AfficherFormuleWorkers();
 
@@ -94,7 +94,7 @@ function validateForm() {
 validateForm();
 
 function AfficherEmployer(Workers) {
-    if(!WorkersContainer) return;
+    if (!WorkersContainer) return;
     WorkersContainer.innerHTML = '';
     Workers.forEach(data => {
         WorkersContainer.innerHTML += `<div class="flex items-center shadow-xl mb-[2%]">
@@ -116,3 +116,33 @@ function CancelFormulaire() {
 }
 CancelFormulaire();
 
+function addExperienceForm() {
+    const experienceCount = ExperienceContainer.children.length;
+    const experienceField = document.createElement('div');
+    experienceField.className = 'experience-field mb-4 p-4 border border-gray-200 rounded-lg';
+    experienceField.innerHTML = `
+        <div class="mb-3">
+            <input type="text" class="experience-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Poste et entreprise">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date de début</label>
+                <input type="date" class="start-date w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date de fin</label>
+                <input type="date" class="end-date w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        <div class="flex justify-end">
+            <button type="button" class="remove-experience px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                <i class="fas fa-times mr-1"></i>Supprimer
+            </button>
+        </div>`;
+    ExperienceContainer.appendChild(experienceField);
+    experienceField.querySelector('.remove-experience').addEventListener('click', function () {
+        if (ExperienceContainer.children.length > 1) {
+            ExperienceContainer.removeChild(experienceField);
+        }
+    });
+}
