@@ -51,23 +51,23 @@
             </div>
 
             <!-- Zone principale - Plan d'etage -->
-            <div class="w-full lg:w-3/4">
+            <div class="w-full lg:w-3/4 md:w-full">
                 <div class="bg-white rounded-xl shadow-sm p-4">
                     <h2 class="text-lg font-semibold text-gray-700 mb-4">Floor plan</h2>
 
                     <div class="floor-plan-container flex gap-2">
-                        <div class="flex flex-col">
+                        <div class="flex flex-col md:w-50">
                             <!-- Salle de conference -->
-                            <div id="RoomConference" class="drop-zone zone w-[26em] h-52" data-zone="conference" data-max="8">
+                            <div id="RoomConference" class="drop-zone zone w-[26em] h-52 md:h-42 md:w-60 md:overflow-x-auto" data-zone="conference" data-max="8">
                                 <div class="zone-title">Conference room</div>
-                                <div class="zone-employees" id="conference-employees"></div>
+                                <div class="zone-employees md:overflow-y-auto" id="conference-employees"></div>
                                 <div class="add-employee-btn" id="add-employee-btn-conference" data-zone="conference">
                                     <i class="fas fa-plus"></i>
                                 </div>
                             </div>
 
                             <!-- Reception -->
-                            <div id="RoomReception" class="drop-zone zone grow" data-zone="reception" data-max="2" data-restricted="receptionist">
+                            <div id="RoomReception" class="drop-zone zone grow md:w-60 md:overflow-x-auto" data-zone="reception" data-max="2" data-restricted="receptionist">
                                 <div class="zone-title">Reception</div>
                                 <div class="zone-employees" id="reception-employees"></div>
                                 <div class="add-employee-btn" id="add-employee-btn-reception" data-zone="reception">
@@ -76,12 +76,12 @@
                             </div>
                         </div>
 
-                        <div class="w-[10em]"></div>
+                        <div class="w-[10em] md:w-[12em]"></div>
 
                         <div class="flex flex-col grow">
                             <div class="flex">
                                 <!-- Salle des serveurs -->
-                                <div id="RoomServer" class="drop-zone zone w-[50%] h-52" data-zone="server" data-max="3" data-restricted="technician">
+                                <div id="RoomServer" class="drop-zone zone w-[50%] h-52 md:h-42 md:w-[50%] md:overflow-x-auto" data-zone="server" data-max="3" data-restricted="technician">
                                     <div class="zone-title">Server room</div>
                                     <div class="zone-employees" id="server-employees"></div>
                                     <div class="add-employee-btn" id="add-employee-btn-server" data-zone="server">
@@ -90,7 +90,7 @@
                                 </div>
 
                                 <!-- Salle de securite -->
-                                <div id="RoomSecurity" class="drop-zone zone w-[50%] h-52" data-zone="security" data-max="2" data-restricted="security">
+                                <div id="RoomSecurity" class="drop-zone zone w-[50%] h-52 md:h-42 md:overflow-x-auto" data-zone="security" data-max="2" data-restricted="security">
                                     <div class="zone-title">Security room</div>
                                     <div class="zone-employees" id="security-employees"></div>
                                     <div class="add-employee-btn" id="add-employee-btn-security" data-zone="security">
@@ -101,7 +101,7 @@
                             <div class="h-48"></div>
                             <div class="flex grow">
                                 <!-- Salle du personnel -->
-                                <div id="RoomStaff" class="drop-zone zone w-[15em]" data-zone="staff" data-max="6">
+                                <div id="RoomStaff" class="drop-zone zone w-[15em] md:h-42 md:w-[50%] md:overflow-x-auto" data-zone="staff" data-max="6">
                                     <div class="zone-title">Staff room</div>
                                     <div class="zone-employees" id="staff-employees"></div>
                                     <div class="add-employee-btn" id="add-employee-btn-staff" data-zone="staff">
@@ -110,7 +110,7 @@
                                 </div>
 
                                 <!-- Salle d'archives -->
-                                <div id="RoomArchive" class="drop-zone zone grow" data-zone="archive" data-max="2" data-restricted="no-cleaning">
+                                <div id="RoomArchive" class="drop-zone zone grow md:h-42 md:overflow-x-auto" data-zone="archive" data-max="2" data-restricted="no-cleaning">
                                     <div class="zone-title">Archives Room</div>
                                     <div class="zone-employees" id="archive-employees"></div>
                                     <div class="add-employee-btn" id="add-employee-btn-archive" data-zone="archive">

@@ -52,6 +52,8 @@ let RoleOther = [];
 let RoleReception = [];
 
 let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
+let workerIdCounter = Workers.length > 0 ? Math.max(...Workers.map(w => parseInt(w.id) || 0)) + 1 : 1;
+let currentZone = null;
 
 //*** fonction qui affiche formule d'ajouter un employe ***
 function AfficherFormuleWorkers() {
@@ -64,30 +66,41 @@ function AfficherFormuleWorkers() {
 }
 AfficherFormuleWorkers();
 
-// function SauvgarderEmploye(){
-//     return localStorage.setItem('workers', JSON.stringify(Workers))
-// }
-// SauvgarderEmploye();
-
 //*** fonction qui donne tous les experiences d'un employe ***
 function getAllExperiences() {
-        const fields = ExperienceContainer.querySelectorAll('.experience-field');
-        let experiences = [];
+    const fields = ExperienceContainer.querySelectorAll('.experience-field');
+    let experiences = [];
 
-        fields.forEach(field => {
-            const expInput = field.querySelector('.experience-input').value.trim();
-            const startDate = field.querySelector('.start-date').value;
-            const endDate = field.querySelector('.end-date').value;
+    fields.forEach(field => {
+        const expInput = field.querySelector('.experience-input').value.trim();
+        const startDate = field.querySelector('.start-date').value;
+        const endDate = field.querySelector('.end-date').value;
 
-            if (expInput) {
+        if (expInput) {
             experiences.push({
                 poste: expInput,
                 start: startDate,
                 end: endDate
             });
         }
-        });
-        return experiences;
+    });
+    return experiences;
+}
+
+//*** fonction tester la validation d'un image ***
+function isValidImageUrl(url) {
+    if (!url || url.trim() === '') return false;
+    const imagePattern = /\.(jpeg|jpg|gif|png|webp|svg)$/i;
+    return imagePattern.test(url);
+}
+
+//*** fonction donne url de image ***
+function getImageUrl(url) {
+    if (isValidImageUrl(url)) {
+        return url;
+    } else {
+        return 'https://i.pinimg.com/1200x/01/85/e4/0185e4c0175af1347a02a9a814ede0e2.jpg';
+    }
 }
 
 //*** fonction qui valide une formule ***
@@ -107,6 +120,7 @@ function validateForm() {
             EmployeLocation: null
         };
         workerIdCounter++;
+        
         //*** fonction qui assigner a chambre ***
         function assignRooms(role) {
             switch(role) {
@@ -125,7 +139,7 @@ function validateForm() {
             }
         }
 
-    EmployeInfo.rooms = assignRooms(EmployeInfo.EmployeRole);
+        EmployeInfo.rooms = assignRooms(EmployeInfo.EmployeRole);
 
         let EmployeNameRe = /^[a-zA-ZÀ-ÿ\s]{2,30}$/;
         let EmployeEmailRe = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -153,7 +167,6 @@ function validateForm() {
         EmployeInfo.EmployePhotoUrl = getImageUrl(EmployeInfo.EmployePhotoUrl);
         
         Workers.push(EmployeInfo);
-
         localStorage.setItem("Workers", JSON.stringify(Workers));
         alert("User added!!!");
         AfficherEmployer(Workers);
@@ -166,11 +179,9 @@ function validateForm() {
         function getRole() {
             if (EmployeInfo.EmployeRole === 'manager') {
                 RoleManager.push(EmployeInfo);
-                console.log(RoleManager);
             }
             else if (EmployeInfo.EmployeRole === 'receptionist') {
                 RoleReception.push(EmployeInfo);
-                console.log(RoleReception);
             }
             else if (EmployeInfo.EmployeRole === 'technician') {
                 RoleServerIT.push(EmployeInfo);
@@ -206,7 +217,7 @@ function AfficherEmployer(Workers) {
         const workerElement = document.createElement('div');
         workerElement.className = 'Worker-Field flex items-center shadow-xl mb-[2%] p-[2%] bg-white rounded-lg';
         workerElement.innerHTML = `
-            <img class="rounded-full w-12 h-12 m-2 object-cover" src="${getSafeImageUrl(data.EmployePhotoUrl)}" alt="${data.EmployeName}">
+            <img class="rounded-full w-12 h-12 m-2 object-cover" src="${getImageUrl(data.EmployePhotoUrl)}" alt="${data.EmployeName}">
             <div class="ml-2 flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-800 truncate">${data.EmployeName}</p>
                 <p class="text-xs text-gray-500 capitalize">${data.EmployeRole}</p>
@@ -236,15 +247,9 @@ function removeWorker(workerId) {
         Workers = Workers.filter(worker => worker.id !== workerId);
         localStorage.setItem("Workers", JSON.stringify(Workers));
         AfficherEmployer(Workers);
-        initializeZoneDisplays();
+        initializeZone();
     }
 }
-
-function initializeZoneDisplays() {
-    const zones = ['conference', 'reception', 'server', 'security', 'staff', 'archive'];
-    zones.forEach(zone => updateZone(zone));
-}
-initializeZoneDisplays();
 
 //*** fonction fais le mise a jour de zone
 function updateZone(zone) {
@@ -271,11 +276,16 @@ function updateZone(zone) {
     });
 }
 
+function initializeZone() {
+    const zones = ['conference', 'reception', 'server', 'security', 'staff', 'archive'];
+    zones.forEach(zone => updateZone(zone));
+}
 
 //*** fonction qui close formule d'ajouter employe ***
 function CancelFormulaire() {
     BtnCancelEmploye.addEventListener('click', () => {
         AddEmploy.classList.add('hidden');
+        resetExperienceForm();
     });
 }
 CancelFormulaire();
@@ -338,44 +348,88 @@ function updateExperienceNumbers() {
 
 //*** fonction qui afficher le formule d'ajouter les employe avec un zone ou chambre ***
 function AfficherFormuleAssign() {
-    Add_Employee_Btn_archive.addEventListener('click', () => {
-        AssignModal.classList.remove('hidden');
+    const buttons = [Add_Employee_Btn_archive, Add_Employee_Btn_staff, Add_Employee_Btn_server, Add_Employee_Btn_reception, Add_Employee_Btn_security, Add_Employee_Btn_conference];
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentZone = btn.dataset.zone;
+            AssignModal.classList.remove('hidden');
+            displayEligibleEmployees(currentZone);
+        });
     });
-    Add_Employee_Btn_staff.addEventListener('click', () => {
-        AssignModal.classList.remove('hidden');
-    });
-    Add_Employee_Btn_server.addEventListener('click', () => {
-        AssignModal.classList.remove('hidden');
-    });
-    Add_Employee_Btn_security.addEventListener('click', () => {
-        AssignModal.classList.remove('hidden');
-    });
-    Add_Employee_Btn_reception.addEventListener('click', () => {
-        AssignModal.classList.remove('hidden');
-    });
-    Add_Employee_Btn_conference.addEventListener('click', () => {
-        AssignModal.classList.remove('hidden');
-    });
+    
     BtnCloseAssignModal.addEventListener('click', () => {
         AssignModal.classList.add('hidden');
     });
 }
-AfficherFormuleAssign();
 
-//*** fonction tester la validation d'un image ***
-function isValidImageUrl(url) {
-    if (!url || url.trim() === '') return false;
-    const imagePattern = /\.(jpeg|jpg|gif|png|webp|svg)$/i;
-    return imagePattern.test(url);
+//*** focntion pour affiche dynamiquement les employes qui possible travaille dans un zone
+function displayEligibleEmployees(zone) {
+    const eligibleEmployees = document.getElementById('eligibleEmployees');
+    eligibleEmployees.innerHTML = '';
+    
+    const unassignedWorkers = Workers.filter(worker => 
+        !worker.EmployeLocation && isWorkerEligibleForZone(worker, zone)
+    );
+    
+    if (unassignedWorkers.length === 0) {
+        eligibleEmployees.innerHTML = '<p class="text-gray-500 text-center py-4">No eligible employees available</p>';
+        return;
+    }
+    
+    unassignedWorkers.forEach(worker => {
+        const employeeElement = document.createElement('div');
+        employeeElement.className = 'flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50';
+        employeeElement.innerHTML = `
+            <img class="rounded-full w-10 h-10 mr-3 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
+            <div class="flex-1">
+                <p class="font-medium text-gray-800">${worker.EmployeName}</p>
+                <p class="text-sm text-gray-500 capitalize">${worker.EmployeRole}</p>
+            </div>
+        `;
+        
+        employeeElement.addEventListener('click', () => {
+            assignWorkerToZone(worker.id, zone);
+            AssignModal.classList.add('hidden');
+        });
+        
+        eligibleEmployees.appendChild(employeeElement);
+    });
 }
 
-function getImageUrl(url) {
-    if (isValidImageUrl(url)) {
-        return url;
-    } else {
-        return 'https://i.pinimg.com/1200x/01/85/e4/0185e4c0175af1347a02a9a814ede0e2.jpg';
+//*** fonction pour tester est ce que un employe possible entre zone ou non
+function isWorkerEligibleForZone(worker, zone) {
+    const zoneElement = document.querySelector(`[data-zone="${zone}"]`);
+    const restrictedRole = zoneElement.dataset.restricted;
+
+    if (!restrictedRole) return true;
+    switch(zone) {
+        case 'reception':
+            return worker.EmployeRole === 'receptionist';
+        case 'server':
+            return worker.EmployeRole === 'technician';
+        case 'security':
+            return worker.EmployeRole === 'security';
+        case 'archive':
+            return worker.EmployeRole === 'manager';
+        case 'staff':
+        case 'conference':
+            return true;
+        default:
+            return true;
     }
 }
+
+//*** fonction pour assign un employe a zone
+function assignWorkerToZone(workerId, zone) {
+    const workerIndex = Workers.findIndex(w => w.id === workerId);
+    if (workerIndex === -1) return;
+    Workers[workerIndex].EmployeLocation = zone;
+    localStorage.setItem("Workers", JSON.stringify(Workers));
+    updateZone(zone);
+    AfficherEmployer(Workers);
+}
+
+AfficherFormuleAssign();
 
 //*** fonction afficher profile employe ***
 function AfficheProfile(worker) {
@@ -415,7 +469,9 @@ function getZoneName(zone) {
     };
     return zoneNames[zone] || zone;
 }
+
 AfficherEmployer(Workers);
+initializeZone();
 
 document.getElementById('employeePhoto').addEventListener('input', function() {
     const url = this.value.trim();
@@ -433,4 +489,5 @@ BtnCloseProfileModal.addEventListener('click', () => {
 BtnCloseProfile.addEventListener('click', () => {
     ProfileModal.classList.add('hidden');
 });
+
 addExperienceForm();

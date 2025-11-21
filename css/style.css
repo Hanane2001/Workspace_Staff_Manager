@@ -39,6 +39,7 @@
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 0.75rem;
+    /* object-fit: cover; */
     overflow: hidden;
 }
 
@@ -103,12 +104,18 @@
 @media (max-width: 1024px) {
     .floor-plan-container {
         height: 500px;
+        width: 100%;
+        background-size: cover;
+        object-fit: cover;
     }
 }
 
 @media (max-width: 768px) {
     .floor-plan-container {
         height: 400px;
+        width: 100%;
+        background-size: cover;
+        object-fit: cover;
     }
 
     .drop-zone {
