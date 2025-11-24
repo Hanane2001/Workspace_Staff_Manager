@@ -52,7 +52,7 @@
 
                             <div class="flex flex-col">
                                 <!-- Salle de conference -->
-                                <div id="RoomConference" class="drop-zone zone w-[26em] h-52 max-md:h-17 max-md:w-33 max-lg:h-32 max-lg:w-65 max-lg:overflow-y-auto" data-zone="conference" data-max="8">
+                                <div id="RoomConference" class="drop-zone zone w-[26em] h-52 max-md:h-15 max-md:w-30 max-lg:h-32 max-lg:w-65 max-lg:overflow-y-auto" data-zone="conference" data-max="8">
                                     <div class="zone-title">Conference room</div>
                                     <div class="zone-employees max-md:overflow-y-auto" id="conference-employees"></div>
                                     <div class="add-employee-btn" id="add-employee-btn-conference" data-zone="conference">
@@ -61,7 +61,7 @@
                                 </div>
 
                                 <!-- Reception -->
-                                <div id="RoomReception" class="drop-zone zone h-101 grow max-md:w-33 max-md:h-34 max-lg:overflow-y-auto" data-zone="reception" data-max="2" data-restricted="receptionist">
+                                <div id="RoomReception" class="drop-zone zone h-103 grow max-md:w-30 max-md:h-35 max-lg:overflow-y-auto" data-zone="reception" data-max="2" data-restricted="receptionist">
                                     <div class="zone-title">Reception</div>
                                     <div class="zone-employees" id="reception-employees"></div>
                                     <div class="add-employee-btn" id="add-employee-btn-reception" data-zone="reception">
@@ -70,12 +70,12 @@
                                 </div>
                             </div>
 
-                            <div class="w-[11em] max-md:w-[11em] max-lg:w-[7em]"></div>
+                            <div class="w-[10em] max-md:w-[11em] max-lg:w-[7em]"></div>
 
                             <div class="flex flex-col grow">
                                 <div class="flex">
                                     <!-- Salle des serveurs -->
-                                    <div id="RoomServer" class="drop-zone zone w-[50%] h-52 max-md:h-18 max-md:w-[50%] max-lg:h-34 max-lg:overflow-y-auto" data-zone="server" data-max="3" data-restricted="technician">
+                                    <div id="RoomServer" class="drop-zone zone w-[50%] h-52 max-md:h-15 max-md:w-[50%] max-lg:h-34 max-lg:overflow-y-auto" data-zone="server" data-max="3" data-restricted="technician">
                                         <div class="zone-title">Server room</div>
                                         <div class="zone-employees" id="server-employees"></div>
                                         <div class="add-employee-btn" id="add-employee-btn-server" data-zone="server">
@@ -84,7 +84,7 @@
                                     </div>
 
                                     <!-- Salle de securite -->
-                                    <div id="RoomSecurity" class="drop-zone zone w-[50%] h-52 max-md:h-18 max-md:w-[50%] max-lg:h-34 max-lg:overflow-y-auto" data-zone="security" data-max="2" data-restricted="security">
+                                    <div id="RoomSecurity" class="drop-zone zone w-[50%] h-52 max-md:h-15 max-md:w-[50%] max-lg:h-34 max-lg:overflow-y-auto" data-zone="security" data-max="2" data-restricted="security">
                                         <div class="zone-title">Security room</div>
                                         <div class="zone-employees" id="security-employees"></div>
                                         <div class="add-employee-btn" id="add-employee-btn-security" data-zone="security">
@@ -95,7 +95,7 @@
                                 <div class="h-52 max-md:h-15 max-lg:h-32"></div>
                                 <div class="flex grow">
                                     <!-- Salle du personnel -->
-                                    <div id="RoomStaff" class="drop-zone zone w-[50%] h-52 max-md:h-18 max-md:w-[50%] max-md:w-[50%] max-lg:overflow-y-auto max-lg:h-34" data-zone="staff" data-max="6">
+                                    <div id="RoomStaff" class="drop-zone zone w-[50%] h-52 max-md:h-15 max-md:w-[50%] max-md:w-[50%] max-lg:overflow-y-auto max-lg:h-34" data-zone="staff" data-max="6">
                                         <div class="zone-title">Staff room</div>
                                         <div class="zone-employees" id="staff-employees"></div>
                                         <div class="add-employee-btn" id="add-employee-btn-staff" data-zone="staff">
@@ -104,7 +104,7 @@
                                     </div>
 
                                     <!-- Salle d'archives -->
-                                    <div id="RoomArchive" class="drop-zone zone w-[50%] h-52 max-md:h-18 max-md:w-[50%] max-lg:overflow-y-auto max-lg:h-34" data-zone="archive" data-max="2" data-restricted="no-cleaning">
+                                    <div id="RoomArchive" class="drop-zone zone w-[50%] h-52 max-md:h-15 max-md:w-[50%] max-lg:overflow-y-auto max-lg:h-34" data-zone="archive" data-max="2" data-restricted="no-cleaning">
                                         <div class="zone-title">Archives Room</div>
                                         <div class="zone-employees" id="archive-employees"></div>
                                         <div class="add-employee-btn" id="add-employee-btn-archive" data-zone="archive">
@@ -121,7 +121,7 @@
     </div>
 
     <!-- Modale d'ajout d'employe -->
-    <div id="employeeModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div id="employeeModal" class="fixed inset-0 flex justify-center items-start overflow-y-auto p-1 max-sm:p-4 z-40 hidden">
         <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
             <div class="flex justify-between items-center p-6 border-b">
                 <h3 class="text-lg font-semibold text-gray-800">Add an employee</h3>

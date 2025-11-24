@@ -68,13 +68,13 @@ AfficherFormuleWorkers();
 
 //*** fonction qui donne tous les experiences d'un employe ***
 function getAllExperiences() {
-    const fields = ExperienceContainer.querySelectorAll('.experience-field');
+    const exp = ExperienceContainer.querySelectorAll('.experience-field');
     let experiences = [];
 
-    fields.forEach(field => {
-        const expInput = field.querySelector('.experience-input').value.trim();
-        const startDate = field.querySelector('.start-date').value;
-        const endDate = field.querySelector('.end-date').value;
+    exp.forEach(str => {
+        const expInput = str.querySelector('.experience-input').value.trim();
+        const startDate = str.querySelector('.start-date').value;
+        const endDate = str.querySelector('.end-date').value;
 
         if (expInput) {
             experiences.push({
@@ -90,8 +90,8 @@ function getAllExperiences() {
 //*** fonction tester la validation d'un image ***
 function isValidImageUrl(url) {
     if (!url || url.trim() === '') return false;
-    const imagePattern = /\.(jpeg|jpg|gif|png|webp|svg)$/i;
-    return imagePattern.test(url);
+    const imageP = /\.(jpeg|jpg|gif|png|webp|svg)$/i;
+    return imageP.test(url);
 }
 
 //*** fonction donne url de image ***
@@ -217,7 +217,7 @@ function AfficherEmployer(Workers) {
         const workerElement = document.createElement('div');
         workerElement.className = 'Worker-Field flex items-center shadow-xl mb-[2%] p-[2%] bg-white rounded-lg';
         workerElement.innerHTML = `
-            <img class="rounded-full w-12 h-12 m-2 object-cover" src="${getImageUrl(data.EmployePhotoUrl)}" alt="${data.EmployeName}">
+            <img class="rounded-full w-12 h-12 max-lg:w-10 max-lg:h-10 m-2 object-cover" src="${getImageUrl(data.EmployePhotoUrl)}" alt="${data.EmployeName}">
             <div class="ml-2 flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-800 truncate">${data.EmployeName}</p>
                 <p class="text-xs text-gray-500 capitalize">${data.EmployeRole}</p>
@@ -261,12 +261,11 @@ function updateZone(zone) {
     
     workersInZone.forEach(worker => {
         const employeeElement = document.createElement('div');
-        employeeElement.className = 'zone-worker flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50 rounded';
+        employeeElement.className = 'zone-worker flex flex-col h-20 w-20 max-md:h-15 max-md:w-10 items-center p-2 cursor-pointer hover:bg-gray-50 rounded';
         employeeElement.innerHTML = `
-            <img class="rounded-full w-12 h-12 mb-1 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
+            <img class="rounded-full w-12 h-12 max-lg:w-10 max-lg:h-10 mb-1 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
             <span class="text-xs text-center font-medium truncate w-full">${worker.EmployeName}</span>
-            <span class="text-xs text-gray-500 capitalize">${worker.EmployeRole}</span>
-        `;
+            <span class="text-xs text-gray-500 capitalize">${worker.EmployeRole}</span>`;
         
         employeeElement.addEventListener('click', () => {
             AfficheProfile(worker);
