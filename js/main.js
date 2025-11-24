@@ -352,9 +352,8 @@ function AddMoreExp() {
     addExperienceForm();
 }
 
-//*** fonction qui designer formule de experience ***
-function addExperienceForm() {
-    ExperienceContainer.innerHTML = '';
+//***fonction qui designer formule de experience ***
+function addExperienceForm() {    
     const experienceCount = ExperienceContainer.children.length + 1;
     const experienceF = document.createElement('div');
     experienceF.className = 'Experience mb-4 p-4 border border-gray-200 rounded-lg';
