@@ -25,6 +25,7 @@ const Add_Employee_Btn_security = document.getElementById('add-employee-btn-secu
 const Add_Employee_Btn_conference = document.getElementById('add-employee-btn-conference');
 const AssignModal = document.getElementById('assignModal');
 const BtnCloseAssignModal = document.getElementById('closeAssignModal');
+const BtnCloseAssign = document.getElementById('cancelAssign');
 
 const RoomConferenceID = document.getElementById('RoomConference'); 
 const RoomReceptionID = document.getElementById('RoomReception');  
@@ -87,6 +88,28 @@ function getAllExperiences() {
     return experiences;
 }
 
+function isValidDate(DateStart, DateFin) {
+    return new Date(DateStart) < new Date(DateFin);
+}
+
+//*** fonction tester la validation d'un date ***
+function validateExperienceDates(experiences) {
+    for (let exp of experiences) {
+
+        if (!exp.start || !exp.end) {
+            alert("enter the date");
+            return false;
+        }
+
+        if (!isValidDate(exp.start, exp.end)) {
+            alert(`End date must be after start date`);
+            return false;
+        }
+    }
+    return true;
+}
+
+
 //*** fonction tester la validation d'un image ***
 function isValidImageUrl(url) {
     if (!url || url.trim() === '') return false;
@@ -102,6 +125,7 @@ function getImageUrl(url) {
         return 'https://i.pinimg.com/1200x/01/85/e4/0185e4c0175af1347a02a9a814ede0e2.jpg';
     }
 }
+
 
 //*** fonction qui valide une formule ***
 function validateForm() {
@@ -161,6 +185,9 @@ function validateForm() {
         }
         if (!EmployePhoneRe.test(EmployeInfo.EmployePhone)) {
             alert('Enter a valid 10-digit number');
+            return;
+        }
+        if(!validateExperienceDates(EmployeInfo.EmployeExperiences)){
             return;
         }
 
@@ -359,6 +386,9 @@ function AfficherFormuleAssign() {
     BtnCloseAssignModal.addEventListener('click', () => {
         AssignModal.classList.add('hidden');
     });
+    BtnCloseAssign.addEventListener('click', () => {
+        AssignModal.classList.add('hidden');
+    });
 }
 
 //*** focntion pour affiche dynamiquement les employes qui possible travaille dans un zone
@@ -378,8 +408,7 @@ function displayEligibleEmployees(zone) {
     unassignedWorkers.forEach(worker => {
         const employeeElement = document.createElement('div');
         employeeElement.className = 'flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50';
-        employeeElement.innerHTML = `
-            <img class="rounded-full w-10 h-10 mr-3 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
+        employeeElement.innerHTML = `<img class="rounded-full w-10 h-10 mr-3 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
             <div class="flex-1">
                 <p class="font-medium text-gray-800">${worker.EmployeName}</p>
                 <p class="text-sm text-gray-500 capitalize">${worker.EmployeRole}</p>
