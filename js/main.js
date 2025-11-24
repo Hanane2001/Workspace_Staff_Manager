@@ -45,16 +45,16 @@ const ProfileLocation = document.getElementById('profileLocation');
 const ProfileExperiences = document.getElementById('profileExperiences');
 const BtnCloseProfile = document.getElementById('closeProfile');
 
-let RoleCleaning = [];
-let RoleManager = [];
-let RoleServerIT = [];
-let RoleSecurity = [];
-let RoleOther = [];
-let RoleReception = [];
+const ROLE_MANAGER = 'manager';
+const ROLE_RECEPTIONIST = 'receptionist';
+const ROLE_TECHNICIAN = 'technician';
+const ROLE_SECURITY = 'security';
+const ROLE_CLEANING = 'cleaning';
+const ROLE_OTHER = 'other';
 
 let Workers = JSON.parse(localStorage.getItem("Workers")) || [];
-let workerIdCounter = Workers.length > 0 ? Math.max(...Workers.map(w => parseInt(w.id) || 0)) + 1 : 1;
-let currentZone = null;
+let IdWorkerInCrement = Workers.length > 0 ? Math.max(...Workers.map(w => parseInt(w.id) || 0)) + 1 : 1;
+let ZoneN = null;
 
 //*** fonction qui affiche formule d'ajouter un employe ***
 function AfficherFormuleWorkers() {
@@ -69,7 +69,7 @@ AfficherFormuleWorkers();
 
 //*** fonction qui donne tous les experiences d'un employe ***
 function getAllExperiences() {
-    const exp = ExperienceContainer.querySelectorAll('.experience-field');
+    const exp = ExperienceContainer.querySelectorAll('.Experience');
     let experiences = [];
 
     exp.forEach(str => {
@@ -134,7 +134,7 @@ function validateForm() {
         e.preventDefault();
         const experiences = getAllExperiences();
         const EmployeInfo = {
-            id: workerIdCounter.toString(),
+            id: IdWorkerInCrement.toString(),
             EmployeName: document.getElementById('employeeName').value.trim(),
             EmployeRole: document.getElementById('employeeRole').value.trim(),
             EmployePhotoUrl: document.getElementById('employeePhoto').value.trim(),
@@ -143,7 +143,7 @@ function validateForm() {
             EmployeExperiences: experiences,
             EmployeLocation: null
         };
-        workerIdCounter++;
+        IdWorkerInCrement++;
         
         //*** fonction qui assigner a chambre ***
         function assignRooms(role) {
@@ -165,6 +165,7 @@ function validateForm() {
 
         EmployeInfo.rooms = assignRooms(EmployeInfo.EmployeRole);
 
+        //*** Rejex ***
         let EmployeNameRe = /^[a-zA-ZÀ-ÿ\s]{2,30}$/;
         let EmployeEmailRe = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         let EmployePhoneRe = /^[0-9]{10}$/;
@@ -200,30 +201,8 @@ function validateForm() {
 
         AddEmploy.classList.add('hidden');
         employeeForm.reset();
-        resetExperienceForm();
-
-        //*** fonction qui stock chaque role dans un tableau ***
-        function getRole() {
-            if (EmployeInfo.EmployeRole === 'manager') {
-                RoleManager.push(EmployeInfo);
-            }
-            else if (EmployeInfo.EmployeRole === 'receptionist') {
-                RoleReception.push(EmployeInfo);
-            }
-            else if (EmployeInfo.EmployeRole === 'technician') {
-                RoleServerIT.push(EmployeInfo);
-            }
-            else if (EmployeInfo.EmployeRole === 'security') {
-                RoleSecurity.push(EmployeInfo);
-            }
-            else if (EmployeInfo.EmployeRole === 'cleaning') {
-                RoleCleaning.push(EmployeInfo);
-            }
-            else {
-                RoleOther.push(EmployeInfo);
-            }
-        }
-        getRole();
+        AddMoreExp();
+        updateZoneVisuals();
     });
 }
 
@@ -234,13 +213,13 @@ function AfficherEmployer(Workers) {
     if (!WorkersContainer) return;
     WorkersContainer.innerHTML = '';
 
-    const unassignedWorkers = Workers.filter(worker => !worker.EmployeLocation);
-    if (unassignedWorkers.length === 0) {
+    const NoAssign = Workers.filter(worker => !worker.EmployeLocation);
+    if (NoAssign.length === 0) {
         WorkersContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No unassigned employees</p>';
         return;
     }
 
-    unassignedWorkers.forEach(data => {
+    NoAssign.forEach(data => {
         const workerElement = document.createElement('div');
         workerElement.className = 'Worker-Field flex items-center shadow-xl mb-[2%] p-[2%] bg-white rounded-lg';
         workerElement.innerHTML = `
@@ -270,11 +249,12 @@ function AfficherEmployer(Workers) {
 
 //*** fonction qui supprime un employe ***
 function removeWorker(workerId) {
-    if (confirm("Are you sure you want to remove this employee?")) {
+    if (confirm("Are you sure you want remove this employee?")) {
         Workers = Workers.filter(worker => worker.id !== workerId);
         localStorage.setItem("Workers", JSON.stringify(Workers));
         AfficherEmployer(Workers);
         initializeZone();
+        updateZoneVisuals();
     }
 }
 
@@ -288,8 +268,10 @@ function updateZone(zone) {
     
     workersInZone.forEach(worker => {
         const employeeElement = document.createElement('div');
-        employeeElement.className = 'zone-worker flex flex-col h-20 w-20 max-md:h-15 max-md:w-10 items-center p-2 cursor-pointer hover:bg-gray-50 rounded';
-        employeeElement.innerHTML = `
+        employeeElement.className = 'zone-worker flex flex-col h-auto w-20 max-md:h-15 max-md:w-10 items-center p-2 cursor-pointer hover:bg-gray-50 rounded';
+        employeeElement.innerHTML = `<button class="remove-from-zone" data-worker-id="${worker.id}">
+                <i class="fas fa-times"></i>
+            </button>
             <img class="rounded-full w-12 h-12 max-lg:w-10 max-lg:h-10 mb-1 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
             <span class="text-xs text-center font-medium truncate w-full">${worker.EmployeName}</span>
             <span class="text-xs text-gray-500 capitalize">${worker.EmployeRole}</span>`;
@@ -297,21 +279,66 @@ function updateZone(zone) {
         employeeElement.addEventListener('click', () => {
             AfficheProfile(worker);
         });
+
+        employeeElement.querySelector('.remove-from-zone').addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeWorkerFromZone(worker.id, zone);
+        });
         
         employeesContainer.appendChild(employeeElement);
     });
+    updateZoneVisuals();
 }
 
 function initializeZone() {
     const zones = ['conference', 'reception', 'server', 'security', 'staff', 'archive'];
     zones.forEach(zone => updateZone(zone));
+    updateZoneVisuals();
+}
+
+//*** fonction pour supprime un employe d'une zone ***
+function removeWorkerFromZone(workerId, zone) {
+    if (confirm("Remove this employee from this zone?")) {
+        const workerIndex = Workers.findIndex(w => w.id === workerId);
+        if (workerIndex === -1) return;
+        Workers[workerIndex].EmployeLocation = null;
+        localStorage.setItem("Workers", JSON.stringify(Workers));
+        updateZone(zone);
+        AfficherEmployer(Workers);
+        updateZoneVisuals();
+    }
+}
+
+//*** fonction pour mise a jour visuelle dans des zones ***
+function updateZoneVisuals() {
+    const zones = document.querySelectorAll('.drop-zone');
+    zones.forEach(zone => {
+        const employeesCount = zone.querySelectorAll('.zone-worker').length;
+        const isRequired = zone.dataset.required === "true";
+        const maxCapacity = parseInt(zone.dataset.max);
+        zone.classList.remove('zone-empty');
+        if (isRequired && employeesCount === 0) {
+            zone.classList.add('zone-empty');
+        }
+        const addButton = zone.querySelector('.add-employee-btn');
+        if (addButton) {
+            if (employeesCount >= maxCapacity) {
+                addButton.style.backgroundColor = '#9ca3af';
+                addButton.style.cursor = 'not-allowed';
+                addButton.onclick = null;
+            } else {
+                addButton.style.backgroundColor = '';
+                addButton.style.cursor = 'pointer';
+            }
+        }
+    });
 }
 
 //*** fonction qui close formule d'ajouter employe ***
 function CancelFormulaire() {
     BtnCancelEmploye.addEventListener('click', () => {
         AddEmploy.classList.add('hidden');
-        resetExperienceForm();
+        AddMoreExp();
     });
 }
 CancelFormulaire();
@@ -320,18 +347,19 @@ EmployeExperience.addEventListener('click', () => {
     addExperienceForm();
 });
 
-function resetExperienceForm() {
+function AddMoreExp() {
     ExperienceContainer.innerHTML = '';
     addExperienceForm();
 }
 
 //*** fonction qui designer formule de experience ***
 function addExperienceForm() {
+    ExperienceContainer.innerHTML = '';
     const experienceCount = ExperienceContainer.children.length + 1;
-    const experienceField = document.createElement('div');
-    experienceField.className = 'experience-field mb-4 p-4 border border-gray-200 rounded-lg';
-    experienceField.setAttribute('data-experience-id', experienceCount);
-    experienceField.innerHTML = `
+    const experienceF = document.createElement('div');
+    experienceF.className = 'Experience mb-4 p-4 border border-gray-200 rounded-lg';
+    experienceF.setAttribute('data-experience-id', experienceCount);
+    experienceF.innerHTML = `
         <div class="flex items-center justify-between mb-3">
             <h4 class="text-lg font-medium">Experience ${experienceCount}</h4>
             <button type="button" class="remove-experience px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
@@ -352,10 +380,10 @@ function addExperienceForm() {
             </div>
         </div>`;
 
-    ExperienceContainer.appendChild(experienceField);
-    experienceField.querySelector('.remove-experience').addEventListener('click', function () {
+    ExperienceContainer.appendChild(experienceF);
+    experienceF.querySelector('.remove-experience').addEventListener('click', function () {
         if (ExperienceContainer.children.length > 1) {
-            ExperienceContainer.removeChild(experienceField);
+            ExperienceContainer.removeChild(experienceF);
             updateExperienceNumbers();
         }
     });
@@ -363,12 +391,12 @@ function addExperienceForm() {
 
 //*** fonction qui incrementer le nombre d'experience ***
 function updateExperienceNumbers() {
-    const experienceFields = ExperienceContainer.querySelectorAll('.experience-field');
-    experienceFields.forEach((field, index) => {
-        const title = field.querySelector('h4');
+    const experienceFl = ExperienceContainer.querySelectorAll('.Experience');
+    experienceFl.forEach((str, index) => {
+        const title = str.querySelector('h4');
         const experienceNumber = index + 1;
         title.textContent = `Experience ${experienceNumber}`;
-        field.setAttribute('data-experience-id', experienceNumber);
+        str.setAttribute('data-experience-id', experienceNumber);
     });
 }
 
@@ -377,9 +405,18 @@ function AfficherFormuleAssign() {
     const buttons = [Add_Employee_Btn_archive, Add_Employee_Btn_staff, Add_Employee_Btn_server, Add_Employee_Btn_reception, Add_Employee_Btn_security, Add_Employee_Btn_conference];
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
-            currentZone = btn.dataset.zone;
+            const zone = btn.dataset.zone;
+            const zoneElement = document.querySelector(`[data-zone="${zone}"]`);
+            const employeesCount = zoneElement.querySelectorAll('.zone-worker').length;
+            const maxCapacity = parseInt(zoneElement.dataset.max);
+            if (employeesCount >= maxCapacity) {
+                alert(`This zone have a maximum capacity of ${maxCapacity} employees`);
+                return;
+            }
+            ZoneN = zone;
             AssignModal.classList.remove('hidden');
-            displayEligibleEmployees(currentZone);
+            document.getElementById('assignModalTitle').textContent = `Assign employee to ${getZoneName(zone)}`;
+            AfficheEmployeeDisponible(ZoneN);
         });
     });
     
@@ -392,20 +429,20 @@ function AfficherFormuleAssign() {
 }
 
 //*** focntion pour affiche dynamiquement les employes qui possible travaille dans un zone
-function displayEligibleEmployees(zone) {
-    const eligibleEmployees = document.getElementById('eligibleEmployees');
-    eligibleEmployees.innerHTML = '';
+function AfficheEmployeeDisponible(zone) {
+    const EmpPoss = document.getElementById('EmployeeDisponible');
+    EmpPoss.innerHTML = '';
     
-    const unassignedWorkers = Workers.filter(worker => 
-        !worker.EmployeLocation && isWorkerEligibleForZone(worker, zone)
+    const NoAssign = Workers.filter(worker => 
+        !worker.EmployeLocation && isWorkerIncludeForZone(worker, zone)
     );
     
-    if (unassignedWorkers.length === 0) {
-        eligibleEmployees.innerHTML = '<p class="text-gray-500 text-center py-4">No eligible employees available</p>';
+    if (NoAssign.length === 0) {
+        EmpPoss.innerHTML = '<p class="text-gray-500 text-center py-4">No employees found</p>';
         return;
     }
     
-    unassignedWorkers.forEach(worker => {
+    NoAssign.forEach(worker => {
         const employeeElement = document.createElement('div');
         employeeElement.className = 'flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50';
         employeeElement.innerHTML = `<img class="rounded-full w-10 h-10 mr-3 object-cover" src="${getImageUrl(worker.EmployePhotoUrl)}" alt="${worker.EmployeName}">
@@ -420,25 +457,21 @@ function displayEligibleEmployees(zone) {
             AssignModal.classList.add('hidden');
         });
         
-        eligibleEmployees.appendChild(employeeElement);
+        EmpPoss.appendChild(employeeElement);
     });
 }
 
 //*** fonction pour tester est ce que un employe possible entre zone ou non
-function isWorkerEligibleForZone(worker, zone) {
-    const zoneElement = document.querySelector(`[data-zone="${zone}"]`);
-    const restrictedRole = zoneElement.dataset.restricted;
-
-    if (!restrictedRole) return true;
+function isWorkerIncludeForZone(worker, zone) {
     switch(zone) {
         case 'reception':
-            return worker.EmployeRole === 'receptionist';
+            return worker.EmployeRole === ROLE_RECEPTIONIST || worker.EmployeRole === ROLE_MANAGER;
         case 'server':
-            return worker.EmployeRole === 'technician';
+            return worker.EmployeRole === ROLE_TECHNICIAN || worker.EmployeRole === ROLE_MANAGER;
         case 'security':
-            return worker.EmployeRole === 'security';
+            return worker.EmployeRole === ROLE_SECURITY || worker.EmployeRole === ROLE_MANAGER;
         case 'archive':
-            return worker.EmployeRole === 'manager';
+            return worker.EmployeRole !== ROLE_CLEANING;
         case 'staff':
         case 'conference':
             return true;
@@ -455,6 +488,7 @@ function assignWorkerToZone(workerId, zone) {
     localStorage.setItem("Workers", JSON.stringify(Workers));
     updateZone(zone);
     AfficherEmployer(Workers);
+    updateZoneVisuals();
 }
 
 AfficherFormuleAssign();
