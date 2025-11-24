@@ -193,7 +193,17 @@ function validateForm() {
         }
 
         EmployeInfo.EmployePhotoUrl = getImageUrl(EmployeInfo.EmployePhotoUrl);
-        
+        document.getElementById('employeePhoto').addEventListener('input', function() {
+            const url = this.value.trim();
+            if (isValidImageUrl(url)) {
+                EmployePhotoPreview.innerHTML = `<img src="${url}" alt="Preview" class="w-full h-full object-cover rounded-full">`;
+            } else if(url === "") { 
+                EmployePhotoPreview.innerHTML = '<i class="fas fa-user text-gray-400 text-2xl"></i>';
+            } else {
+                EmployePhotoPreview.innerHTML = `<img src="https://i.pinimg.com/1200x/01/85/e4/0185e4c0175af1347a02a9a814ede0e2.jpg" alt="Default" class="w-full h-full object-cover rounded-full">`;
+            }
+        });
+
         Workers.push(EmployeInfo);
         localStorage.setItem("Workers", JSON.stringify(Workers));
         alert("User added!!!");
@@ -203,6 +213,7 @@ function validateForm() {
         employeeForm.reset();
         AddMoreExp();
         updateZoneVisuals();
+        
     });
 }
 
