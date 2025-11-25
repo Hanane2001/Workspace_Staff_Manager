@@ -18,6 +18,7 @@
                 <h1 class="text-xl font-bold text-gray-800">Workspace Staff Manager</h1>
             </div>
             <div class="flex items-center space-x-4">
+                <input type="text" id="searchInput" class="border px-3 py-2 rounded-lg" placeholder="Rechercher un employé…"/> 
                 <button id="searchBtn"
                     class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors">
                     <i class="fas fa-search mr-2"></i>Search
@@ -45,7 +46,7 @@
             <!-- Zone principale - Plan d'etage -->
             <div class="w-full">
                 <div class="bg-white rounded-xl shadow-sm p-4">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-4">Floor plan</h2>
+                    <h2 id="FloorPlan" class="text-lg font-semibold text-gray-700 mb-4">Floor plan</h2>
 
                     <div class="floor-plan-container">
                         <div class="floor-plan-overlay">

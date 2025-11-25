@@ -563,3 +563,54 @@ BtnCloseProfile.addEventListener('click', () => {
 });
 
 addExperienceForm();
+
+
+// let data1 = [
+//     {
+//         "prenom" : "Hamza",
+//         "nom" : "kamal",
+//         "email": "hamza@gmail.com",
+//         "salaire" : 10000
+//     },
+//         {
+//         "prenom" : "Zineb",
+//         "nom" : "kamili",
+//         "email": "zineb@gmail.com",
+//         "salaire" : 15000
+//     },
+//         {
+//         "prenom" : "Mouad",
+//         "nom" : "Aabilla",
+//         "email": "mouad@gmail.com",
+//         "salaire" : 9800
+//     },
+//         {
+//         "prenom" : "Amine",
+//         "nom" : "zemrani",
+//         "email": "amine@gmail.com",
+//         "salaire" : 23000
+//     },
+//         {
+//         "prenom" : "Siham",
+//         "nom" : "Miloud",
+//         "email": "siham@gmail.com",
+//         "salaire" : 37000
+//     }
+// ]
+
+// function AfficheEmployeSalaire(){
+//     return data1.filter(w=>w.salaire >= 10000);
+// }
+// console.log(AfficheEmployeSalaire());
+
+// const FloorPlan = document.getElementById('FloorPlan');
+
+// function Affiche(){
+//     let st = data1.filter(w=>w.salaire >= 10000);
+//     // console.log(st);
+//     st.forEach((e)=>{
+//         FloorPlan.textContent += e.prenom;
+//     })
+// }
+
+// Affiche();
